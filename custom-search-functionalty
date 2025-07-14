@@ -1,0 +1,23 @@
+function custom_property_search_filter( $query ) {
+    if ( ! is_admin() && $query->is_main_query() && is_search() ) {
+        if ( isset( $_GET['bedrooms'] ) ) {
+            $query->set( 'meta_query', array(
+                array(
+                    'key'     => 'bedrooms',
+                    'value'   => sanitize_text_field( $_GET['bedrooms'] ),
+                    'compare' => '=',
+                )
+            ));
+        }
+        if ( isset( $_GET['location'] ) ) {
+            $query->set( 'tax_query', array(
+                array(
+                    'taxonomy' => 'property_location',
+                    'field'    => 'slug',
+                    'terms'    => sanitize_text_field( $_GET['location'] ),
+                )
+            ));
+        }
+    }
+}
+add_action( 'pre_get_posts', 'custom_property_search_filter' );
